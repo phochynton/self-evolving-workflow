@@ -1,0 +1,44 @@
+# agent.yaml (v4.3)
+# Resolved from ./agent.yaml, then ~/.gemini/config/agent.yaml.
+#
+# model:      flash | pro | inherit    (inherit = the model of the window that starts the subagent)
+# reasoning:  low | medium | high | inherit
+# The skills pass both values to invoke_subagent. If the harness accepts only one of them,
+# or neither, the skills use what it accepts and say so once in the MAP banner.
+#
+# This sample is for a setup where only Gemini 3.8 Flash is callable inside Antigravity.
+# The window you work in stays at medium; raise it to high by hand for /PLAN and ticket slicing.
+workflow:
+  adversarial_review:
+    attackers_model: flash
+    attackers_reasoning:
+      tier1: medium
+      tier2: medium
+      tier3: high
+    # Internal judge. An external judge (Argon in the Gemini app, ar-attackers --external-judge)
+    # is the stronger ruling and is preferred for Tier 3.
+    judge_model: flash
+    judge_reasoning: high
+    round2_delta_only: true
+    external_max_chars: 150000        # also caps the external review prompt of MAP Stage 3
+    lint:
+      script: scripts/plan-lint.ps1
+    mcp_grounding: on_demand          # off | on_demand | required (used by ratio)
+
+  map:
+    # test_command: <full offline test command>   # omit to read from AGENTS.md or CI
+    # build_cmd: dotnet build --no-incremental    # baseline records warning count; tickets may not raise it
+    # static_checks:                              # each must exit 0 in every green gate.
+    #   - dotnet format --verify-no-changes       # enable only after it passes once on a clean tree
+    developer_model: flash
+    developer_reasoning:
+      tier1: low
+      tier2: medium
+      tier3: high
+    # escalate_model: pro                         # optional: used when a ticket still fails at high reasoning
+    reviewer_mode: auto                           # auto = external when any ticket is Tier 3, else internal
+    reviewer_model: flash                         # internal mode only
+    reviewer_reasoning:
+      round1: high
+      later: medium
+    max_iterations: 3

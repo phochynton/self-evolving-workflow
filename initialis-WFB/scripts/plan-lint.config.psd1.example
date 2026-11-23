@@ -1,0 +1,40 @@
+@{
+    # Project-specific rules for scripts/plan-lint.ps1
+    # Copy to scripts/plan-lint.config.psd1 in your target repository and customize.
+
+    AlwaysDocs = @(
+        # "README.md"
+    )
+
+    DocMap = @(
+        # @{ Match = 'Auth|Permission'; Docs = @('docs/auth.md') }
+    )
+
+    Gates = @(
+        # @{ Match = 'Auth|Permission'; Test = 'AuthorizationTests' }
+    )
+
+    Tier3When = @(
+        # 'Auth|Permission|Migration|Schema'
+    )
+
+    ProtectedPaths = @(
+        '^AGENTS\.md$'
+        '^GLOSSARY\.md$'
+        '^scripts/'
+        '^\.gemini/skills/'
+    )
+
+    TestPaths = @(
+        'tests?/'
+        'Tests\.'
+        '\.spec\.'
+        '\.test\.'
+    )
+
+    MaxPlanChars = 15000
+    MaxLineChars = 400
+    MaxTicketFiles = 3
+    MaxTicketLines = 150
+    TestEditLevel = 'Error'
+}
