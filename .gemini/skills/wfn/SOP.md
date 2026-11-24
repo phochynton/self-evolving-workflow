@@ -1,44 +1,37 @@
-# WFN SOP — Runtime Workflow Navigation
+# WFN SOP — User-Facing Launcher & UI
 
 ## Purpose
-Determine the current workflow state and output the single clearest next action, skill, and Gate.
+Serve as the single human-in-the-loop entry point above the 8 `*-controller` skills, `WFB`, and `itero`: communicate with the user, consult `flow-controller` for state, decide when to launch targets, and surface blockers.
 
 ## Steps
 
-### 1. Inspect Project State
-1. Run `git status --short` to check for uncommitted work.
-2. Check for active feature artifacts (sharing `Run ID` `<id>`):
-   - `docs/specs/<feature>/<id>-*-ratio.md` (check `run_id`, `status`, `round`, `verdict`, `open_accepted_items`, `ar_waiver`)
-   - `docs/specs/<feature>/<id>-criticus-r*.md` and `<id>-censo-r*.md`
-   - `.scratch/<feature>/issues/<id>-sectio-*.md`, `.scratch/<feature>/<id>-faber-state.md`, `.scratch/<feature>/evidence/*`
-   - `docs/specs/known-open.md`
-3. **Done when**: Current stage, `<id>`, and active feature (or "new task") are identified.
+### 1. Align User Intent & Consult `flow-controller`
+1. Read the user's request.
+2. Invoke `flow-controller` to inspect file-driven state (`Run ID`, Tier, recommended stage, blockers).
+3. **Done when**: User intent and `flow-controller` recommendation are known.
 
-### 2. Route by State & Tier
-Follow this decision table:
+### 2. Launch Appropriate Target
+Based on user intent and `flow-controller` recommendation, launch the matching target:
 
-| Current State | Recommended Skill | Action |
-| :--- | :--- | :--- |
-| New task / unclear Tier | `libra` | Assign `Run ID` `<id>` and `Tier 1–4` (or `codex` for external plan). |
-| `Tier 4` (oversized/unclear) | IP Skill: `wayfinder` | Stop coding; map decisions and split into Tier 2/3 plans. |
-| `Tier 1` (single-line) | `faber` | Run single-line `tdd` (IP) + Gate + commit. |
-| `Tier 2` / `Tier 3` without `<id>-*-ratio.md` | `ratio` | Create contract `<id>-<summary>-ratio.md` (`Interfaces` & `plan-lint`). |
-| `<id>-*-ratio.md` `status: draft` (Tier 3) | `criticus` | Run `plan-lint.ps1`, dispatch `criticus-Alpha/Beta/Gamma` (plus `codex` if external). |
-| `<id>-criticus-r<N>.md` exists, no `<id>-censo-r<N>.md` | `censor` | Open fresh context (or external) for `<id>-censo-r<N>.md`. |
-| `<id>-censo-r<N>.md` has `open_accepted_items > 0` or Blocker needs R2 | `ratio` / `criticus` | Apply `(Remedy N.k)` in `<id>-*-ratio.md`; run Round 2 if Blocker accepted. |
-| `<id>-*-ratio.md` `status: ar-done` or `approved`, no Slices | `sectio` | Run `plan-lint.ps1 -Gate map`, then slice via `to-tickets` (IP). |
-| Slices exist, incomplete in `<id>-faber-state.md` | `faber` | Execute via `implement-spec` (IP) + `ticket-gate.ps1`. |
-| All Slices done, not delivered | `custos` | Run mechanical Gate, review loop (`code-review` IP -> `<id>-custos-r<N>.md`), and `-Gate post -Deliver`. |
-| `status: delivered` | `itero` | Collect `<id>-itero-metrics.json`, run `retro` (IP), write `<id>-itero.md`. |
-| Evolution proposals ready | `wfb` | Review and apply approved skill/SOP updates. |
+| Intent / Stage | Target to Launch |
+| :--- | :--- |
+| Multi-agent dispatch, permissions, handoff | `subagent-controller` |
+| `AGENTS.md`, guardrails, Spec/Tickets/ADR/Glossary, `plan-lint`/`ticket-gate` | `rule-controller` |
+| Context budget, Handoff compression, preferences, token report | `context-controller` |
+| CLI / API / MCP readiness check and invocation | `tool-controller` |
+| Build, test, code lint, log check, 3-retry circuit breaker, `custos` delivery | `verify-controller` |
+| Module design, TDD, code review, debugging strategy | `code-controller` |
+| Human-facing PRs, user guides, writing-style profile docs | `manuscript-controller` |
+| Post-delivery retrospective (`retro` IP) | `itero` |
+| Skill/SOP evolution & `retro`-gated Stage AUTO Switch proposals | `WFB` |
 
-**Done when**: Exact next skill, target file (`@<path>`), and required Gate command are output.
+**Done when**: The target is launched (or confirmed with the user when human approval is required).
 
-### 3. Output Format
-Print a concise 4-line status block:
-- **Stage**: `<current stage & Tier>`
-- **Blockers**: `<dirty tree / open_accepted_items / failing Gate / none>`
-- **Next Skill**: `<skill name>` (plus `@<artifact>` if applicable)
-- **Next Gate**: `<exact command or none>`
-
-**Done when**: The 4-line status block is delivered without modifying any files.
+### 3. Handle Escalated Blockers & Output Status
+1. Present any escalated blocker (3-attempt circuit breaker, Gate failure, or Honest Boundary) clearly and ask the user how to proceed.
+2. Output a concise 4-line status block:
+   - **Stage**: `<current stage & Tier>`
+   - **Blockers**: `<dirty tree / circuit breaker / failing Gate / none>`
+   - **Next Target**: `<controller, WFB, or itero>` (plus `@<artifact>` if applicable)
+   - **Next Gate**: `<exact command or user decision required>`
+3. **Done when**: The user has clear visibility and control over the next launch or blocker resolution.

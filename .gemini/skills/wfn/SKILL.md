@@ -1,17 +1,17 @@
 ---
 name: wfn
 description: >-
-  Runtime workflow navigator. Reads project state (git status, plan.md, state.md,
-  known-open.md) and recommends the exact next skill, Tier, and Gate.
+  User-facing runtime launcher and UI above the 8 controllers. Communicates with
+  the user, invokes flow-controller for state, and decides when to trigger controllers.
 ---
 
-# WFN (Workflow Navigator)
+# WFN (Workflow Launcher & UI)
 
-Read project state and guide the user or main agent to the next workflow step.
+Act as the user-facing launcher above the 8 `*-controller` skills: align intent, launch controllers, and surface blockers.
 
 Read and follow [SOP.md](SOP.md) in this directory.
 
 ## Invariants
-- Read-only: never edit production code, skills, or SOPs.
-- Trust script Gate outputs (`plan-lint.ps1`, `ticket-gate.ps1`) over prose.
-- Keep IP Skills external: recommend invoking them by name, never copy them.
+- Read-only UI/launcher: keep production code, skills, and SOPs untouched.
+- Delegate state-machine and Tier calculation to `flow-controller` (`ADR-0001`).
+- Keep IP Skills external: recommend by reference only.
