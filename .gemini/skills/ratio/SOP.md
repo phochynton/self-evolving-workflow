@@ -22,6 +22,7 @@ Produce a high-density contract `docs/specs/<feature>/<id>-<summary>-ratio.md` u
 
 ### 3. Draft Contract `<id>-<summary>-ratio.md`
 Write `docs/specs/<feature>/<id>-<summary>-ratio.md` with YAML frontmatter (`run_id: <id>`, `feature`, `status: draft`, `round: 0`, `verdict: null`, `open_accepted_items: 0`) and these sections:
+0. **`## 0. Requirement`**: Concise 1–2 sentence requirement statement (required by `plan-lint.ps1`).
 1. **`## 1. Blast Radius Target`**: Exact symbol list from Step 1 (plus `Grounding: <id>-grounding.md` if created).
 2. **`## 2. Out of Scope`**: Explicit exclusions for `censor` to dismiss out-of-scope attacks.
 3. **`## 3. Interfaces (Consumes / Produces)`**: Exact method/API signatures, DTOs, and contracts so isolated `faber` agents never guess.

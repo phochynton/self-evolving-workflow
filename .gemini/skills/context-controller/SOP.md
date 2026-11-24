@@ -16,6 +16,6 @@ Keep Context Window usage lean through Progressive Disclosure, compressed Handof
 3. **Done when**: Compressed Handoff bundle or preference pointer is ready.
 
 ### 3. Measure Token Waste for `retro`
-1. Run `pwsh -NoProfile -File scripts/measure-tokens.ps1` (or collect session token metrics) at delivery/retro time.
+1. Run `pwsh -NoProfile -File scripts/measure-tokens.ps1` at delivery/retro time; if `transcript.jsonl` is unavailable (e.g., remote devbox), record `unavailable` (`Honest Boundary`) without estimating numbers.
 2. Identify high-waste steps (repeated reads, oversized dumps, retry loops) and write `<id>-token-audit.md` for `itero` (`retro`).
-3. **Done when**: Token-waste report is handed to `itero` / `retro`.
+3. **Done when**: Token-waste report (or `unavailable` record) is handed to `itero` / `retro`.

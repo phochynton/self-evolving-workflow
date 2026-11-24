@@ -7,8 +7,9 @@ Close the feedback loop after delivery by measuring token/cache facts, running `
 
 ### 1. Measure Token & Cache Metrics
 1. Run `pwsh -NoProfile -File scripts/measure-tokens.ps1 -Output docs/specs/<feature>/<id>-itero-metrics.json` (pass `-SubagentPaths` and `-Segment` when available).
-2. Read `<id>-itero-metrics.json` and `docs/specs/<feature>/<id>-custos-retro-input.md`.
-3. **Done when**: `<id>-itero-metrics.json` is generated and committed in `docs/specs/<feature>/`.
+2. If `transcript.jsonl` is unavailable (e.g., remote devbox), record `unavailable` per `Honest Boundary` without estimating numbers.
+3. Read `<id>-itero-metrics.json` (when generated) and `docs/specs/<feature>/<id>-custos-retro-input.md`.
+4. **Done when**: `<id>-itero-metrics.json` is committed or `unavailable` is explicitly recorded.
 
 ### 2. Run IP Skill `retro`
 1. Invoke IP Skill `retro` with `<id>-custos-retro-input.md` and `<id>-itero-metrics.json`.
